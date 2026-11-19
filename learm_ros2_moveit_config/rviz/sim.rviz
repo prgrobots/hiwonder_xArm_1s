@@ -59,7 +59,7 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Class: moveit_ros_visualization/MotionPlanning
+    - Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Name: MotionPlanning
       Planned Path:
