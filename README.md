@@ -45,7 +45,7 @@ ros2 --help
 
 ```bash
 cd ~
-git clone -b xarm-sim https://github.com/prgrobots/hiwonder_xArm_1s.git
+git clone https://github.com/prgrobots/hiwonder_xArm_1s.git
 cd hiwonder_xArm_1s
 
 source /opt/ros/jazzy/setup.bash
