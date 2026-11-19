@@ -177,10 +177,3 @@ Only the servos you name move; every other joint holds its position.
 ## Stop the simulator
 
 Press **Ctrl+C** in terminal A.
-
----
-
-## Full API
-
-See [`xarm_sim/README.md`](xarm_sim/README.md) for `Servo`, `Controller`,
-`setPosition`, `getPosition`, `servoOff`, and `getBatteryVoltage`.
