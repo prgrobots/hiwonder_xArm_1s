@@ -34,3 +34,6 @@ joint_trajectory_controller:
     open_loop_control: false
     allow_integration_in_goal_trajectories: true
     allow_nonzero_velocity_at_trajectory_end: false
+    # xarm_sim sends goals that only name the servos being moved. Unnamed
+    # joints hold their current position, matching the real arm.
+    allow_partial_joints_goal: true

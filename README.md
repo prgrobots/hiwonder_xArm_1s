@@ -6,10 +6,11 @@ A ROS 2 (Jazzy) simulation of the [Hiwonder xArm 1S / LeArm](https://www.hiwonde
 a 6-DOF aluminium robotic arm. It runs entirely on your computer — **no
 physical arm, USB connection, or Gazebo required**.
 
-The simulated arm is displayed in RViz and can be driven in two ways:
+The simulated arm is displayed in RViz and can be driven in three ways:
 
-1. publishing a string of servo positions (the student-facing interface), or
-2. planning and executing motions with MoveIt.
+1. publishing a string of servo positions (the student-facing interface),
+2. calling the `xarm_sim` Python package, or
+3. planning and executing motions with MoveIt.
 
 ---
 
@@ -20,6 +21,7 @@ The simulated arm is displayed in RViz and can be driven in two ways:
 | `learm_ros2` | `sim_commands` node and the top-level `sim.launch.py`. |
 | `learm_ros2_description` | URDF/xacro, meshes, and mock `ros2_control` configuration. |
 | `learm_ros2_moveit_config` | MoveIt config (SRDF, kinematics, OMPL, controllers) and RViz layout. |
+| `xarm_sim` | Pip-installable `xarm`-compatible Python API. See [`xarm_sim/README.md`](xarm_sim/README.md). |
 
 ---
 
@@ -115,6 +117,34 @@ A new command cancels the previous trajectory, so rapid updates do not queue up.
 
 ---
 
+## Using the `xarm_sim` Python package
+
+`xarm_sim` is a pip-installable drop-in replacement for the PyPI
+[`xarm`](https://pypi.org/project/xarm/) package. Code written against the
+hardware library only needs a different import:
+
+```python
+import xarm_sim as xarm
+
+arm = xarm.Controller("USB")
+arm.setPosition([[1, 0], [2, 500], [3, 500], [4, 500], [5, 500], [6, 500]])
+```
+
+Install it into a Python environment that can see your ROS 2 installation:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+python3 -m venv --system-site-packages ~/xarm-sim-venv
+source ~/xarm-sim-venv/bin/activate
+pip install ./xarm_sim
+```
+
+With the simulator running, `setPosition`, `getPosition`, `servoOff` and
+`getBatteryVoltage` behave like the original package. See
+[`xarm_sim/README.md`](xarm_sim/README.md) for the full API and examples.
+
+---
+
 ## Using MoveIt
 
 In RViz, open the **MotionPlanning** panel:
@@ -139,17 +169,20 @@ ros2 topic echo /joint_states
 ## How it works
 
 ```
-/xarm/command (std_msgs/String)
-        │
-        ▼
-   sim_commands ──FollowJointTrajectory──▶ joint_trajectory_controller
-                                                  │
-                                      ros2_control mock hardware
-                                      (mock_components/GenericSystem)
-                                                  │
-                                             /joint_states
-                                             ├──▶ robot_state_publisher ──▶ RViz
-                                             └──▶ move_group
+/xarm/command (std_msgs/String)          xarm_sim.Controller("USB")
+        │                                         │
+        ▼                                         │
+   sim_commands ──FollowJointTrajectory──┐        │
+                                         ▼        ▼
+                              joint_trajectory_controller
+                                         │
+                            ros2_control mock hardware
+                            (mock_components/GenericSystem)
+                                         │
+                                    /joint_states
+                                    ├──▶ robot_state_publisher ──▶ RViz
+                                    ├──▶ move_group
+                                    └──▶ xarm_sim.getPosition()
 ```
 
 No hardware plugin is used: the `<ros2_control>` block in
@@ -164,4 +197,12 @@ the resulting joint states.
 ```bash
 colcon test --packages-select learm_ros2
 colcon test-result --verbose
+```
+
+The `xarm_sim` package has its own tests, which do not need ROS:
+
+```bash
+cd xarm_sim
+pip install -e ".[test]"
+pytest
 ```
