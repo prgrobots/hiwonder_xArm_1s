@@ -88,12 +88,6 @@ pip install ./xarm_sim
 
 Source ROS **before** activating the venv in every new terminal.
 
-`xarm_sim` is not on PyPI yet. If you do not have the repository locally:
-
-```bash
-pip install "git+https://github.com/prgrobots/hiwonder_xArm_1s.git@xarm-sim#subdirectory=xarm_sim"
-```
-
 ---
 
 ## 5. Move the arm
