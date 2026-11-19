@@ -1,0 +1,22 @@
+# MoveIt controller management.
+#
+# MoveIt sends FollowJointTrajectory goals to the ros2_control
+# joint_trajectory_controller, which drives the mock hardware.
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - joint_trajectory_controller
+
+  joint_trajectory_controller:
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - shoulder_pan
+      - shoulder_lift
+      - elbow
+      - wrist_flex
+      - wrist_roll
+      - grip_left

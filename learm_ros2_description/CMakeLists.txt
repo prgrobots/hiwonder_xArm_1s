@@ -1,13 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(learm_ros2_description)
 
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY config meshes rviz srdf urdf
+  DIRECTORY config meshes urdf
   DESTINATION share/${PROJECT_NAME}
 )
-
-ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 ament_package()

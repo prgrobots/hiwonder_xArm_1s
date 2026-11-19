@@ -1,15 +1,16 @@
 Panels:
-  - Class: rviz/Displays
+  - Class: rviz_common/Displays
     Help Height: 84
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
+        - /RobotModel1
       Splitter Ratio: 0.5
-    Tree Height: 226
-  - Class: rviz/Help
+    Tree Height: 420
+  - Class: rviz_common/Help
     Name: Help
-  - Class: rviz/Views
+  - Class: rviz_common/Views
     Expanded:
       - /Current View1
     Name: Views
@@ -18,12 +19,12 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1
-      Class: rviz/Grid
+      Cell Size: 0.1
+      Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.03
+        Line Width: 0.01
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -32,10 +33,33 @@ Visualization Manager:
         Y: 0
         Z: 0
       Plane: XY
-      Plane Cell Count: 10
+      Plane Cell Count: 20
       Reference Frame: <Fixed Frame>
       Value: true
-    - Class: moveit_rviz_plugin/MotionPlanning
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: moveit_ros_visualization/MotionPlanning
       Enabled: true
       Name: MotionPlanning
       Planned Path:
@@ -46,7 +70,7 @@ Visualization Manager:
         Show Robot Visual: true
         Show Trail: false
         State Display Time: 0.05 s
-        Trajectory Topic: move_group/display_planned_path
+        Trajectory Topic: /display_planned_path
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
@@ -64,7 +88,7 @@ Visualization Manager:
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
-      Planning Scene Topic: move_group/monitored_planning_scene
+      Planning Scene Topic: /monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
         Scene Alpha: 1
@@ -77,21 +101,34 @@ Visualization Manager:
         Robot Alpha: 0.5
         Show Scene Robot: true
       Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: false
+      Frame Timeout: 15
+      Marker Scale: 0.3
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Fixed Frame: base_link
+    Frame Rate: 30
   Name: root
   Tools:
-    - Class: rviz/Interact
+    - Class: rviz_default_plugins/Interact
       Hide Inactive Objects: true
-    - Class: rviz/MoveCamera
-    - Class: rviz/Select
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
   Value: true
   Views:
     Current:
-      Class: rviz/Orbit
-      Distance: 2.0
+      Class: rviz_default_plugins/Orbit
+      Distance: 0.8
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -99,9 +136,9 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: -0.1
-        Y: 0.25
-        Z: 0.30
+        X: 0
+        Y: 0
+        Z: 0.15
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05
       Invert Z Axis: false
@@ -109,23 +146,22 @@ Visualization Manager:
       Near Clip Distance: 0.01
       Pitch: 0.5
       Target Frame: base_link
-      Yaw: -0.6232355833053589
+      Yaw: -0.7
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 848
+  Height: 900
   Help:
-    collapsed: false
+    collapsed: true
   Hide Left Dock: false
   Hide Right Dock: false
   MotionPlanning:
     collapsed: false
-  MotionPlanning - Trajectory Slider:
+  MotionPlanning - Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001f0000002f6fc0200000007fb000000100044006900730070006c006100790073010000003d00000173000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001b60000017d0000017d00ffffff00000315000002f600000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1291
-  X: 454
-  Y: 25
+  Width: 1300
+  X: 100
+  Y: 50
