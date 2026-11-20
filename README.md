@@ -10,8 +10,102 @@ Gazebo required**.
 RViz shows the arm, and your Python code drives it with the same API as the
 real `xarm` package.
 
-> **On the supplied VM?** If the build or launch fails, see
-> [Fixing the supplied VM](#fixing-the-supplied-vm).
+---
+
+## Before you start: fixing the supplied VM
+
+Only needed on the supplied VM. If you are setting up your own machine, skip
+to [step 1](#1-install-ros-2-jazzy).
+
+The VM image has two package mismatches that can stop the build or make
+`ros2_control_node`, `move_group`, and RViz exit immediately. Apply the fixes
+below inside the VM.
+
+### Build fails with `option --editable not recognized`
+
+A newer setuptools in your user site-packages is hiding the ROS-compatible
+system one. Check which one Python uses:
+
+```bash
+python3 -c "import setuptools; print(setuptools.__version__, setuptools.__file__)"
+```
+
+If it reports **84.x** from `/home/webot/.local/...`, remove the user copy:
+
+```bash
+rm -rf ~/.local/lib/python3.12/site-packages/setuptools* \
+       ~/.local/lib/python3.12/site-packages/_distutils_hack \
+       ~/.local/lib/python3.12/site-packages/distutils-precedence.pth
+```
+
+It should now report **68.1.2** from `/usr/lib/python3/dist-packages`:
+
+```bash
+python3 -c "import setuptools; print(setuptools.__version__, setuptools.__file__)"
+```
+
+Rebuild with symlinks — do **not** remove `--symlink-install`:
+
+```bash
+cd ~/hiwonder_xArm_1s
+rm -rf build install log
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+### Launch fails with `undefined symbol ... Cdr9serializeEj`
+
+You will see `exit code 127`, or RViz opens and closes, with:
+
+```
+symbol lookup error: ... undefined symbol: _ZN8eprosima7fastcdr3Cdr9serializeEj
+```
+
+The installed Fast CDR / Fast DDS packages are from different releases.
+Upgrade the matching stack:
+
+```bash
+sudo apt update
+sudo apt install --only-upgrade \
+  ros-jazzy-fastcdr \
+  ros-jazzy-fastrtps \
+  ros-jazzy-fastrtps-cmake-module \
+  ros-jazzy-rmw-fastrtps-cpp \
+  ros-jazzy-rmw-fastrtps-shared-cpp \
+  ros-jazzy-rosidl-dynamic-typesupport-fastrtps \
+  ros-jazzy-rosidl-typesupport-fastrtps-c \
+  ros-jazzy-rosidl-typesupport-fastrtps-cpp
+```
+
+Then restart the ROS daemon and rebuild:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 daemon stop
+cd ~/hiwonder_xArm_1s
+rm -rf build install log
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Check the versions:
+
+```bash
+dpkg -l ros-jazzy-fastcdr ros-jazzy-fastrtps ros-jazzy-rmw-fastrtps-cpp | grep ^ii
+```
+
+Expected:
+
+```
+ros-jazzy-fastcdr          2.2.8
+ros-jazzy-fastrtps         2.14.7
+ros-jazzy-rmw-fastrtps-cpp 8.4.5
+```
+
+If a different `symbol lookup error` appears later, the VM has ROS packages
+from mixed dates. Take a VM snapshot, then run `sudo apt upgrade` to align all
+`ros-jazzy-*` packages.
 
 ---
 
@@ -175,96 +269,3 @@ Only the servos you name move; every other joint holds its position.
 
 Press **Ctrl+C** in terminal A.
 
----
-
-## Fixing the supplied VM
-
-The VM image has two package mismatches that can stop the build or make
-`ros2_control_node`, `move_group`, and RViz exit immediately. Apply the fixes
-below inside the VM.
-
-### Build fails with `option --editable not recognized`
-
-A newer setuptools in your user site-packages is hiding the ROS-compatible
-system one. Check which one Python uses:
-
-```bash
-python3 -c "import setuptools; print(setuptools.__version__, setuptools.__file__)"
-```
-
-If it reports **84.x** from `/home/webot/.local/...`, remove the user copy:
-
-```bash
-rm -rf ~/.local/lib/python3.12/site-packages/setuptools* \
-       ~/.local/lib/python3.12/site-packages/_distutils_hack \
-       ~/.local/lib/python3.12/site-packages/distutils-precedence.pth
-```
-
-It should now report **68.1.2** from `/usr/lib/python3/dist-packages`:
-
-```bash
-python3 -c "import setuptools; print(setuptools.__version__, setuptools.__file__)"
-```
-
-Rebuild with symlinks — do **not** remove `--symlink-install`:
-
-```bash
-cd ~/hiwonder_xArm_1s
-rm -rf build install log
-source /opt/ros/jazzy/setup.bash
-colcon build --symlink-install
-source install/setup.bash
-```
-
-### Launch fails with `undefined symbol ... Cdr9serializeEj`
-
-You will see `exit code 127`, or RViz opens and closes, with:
-
-```
-symbol lookup error: ... undefined symbol: _ZN8eprosima7fastcdr3Cdr9serializeEj
-```
-
-The installed Fast CDR / Fast DDS packages are from different releases.
-Upgrade the matching stack:
-
-```bash
-sudo apt update
-sudo apt install --only-upgrade \
-  ros-jazzy-fastcdr \
-  ros-jazzy-fastrtps \
-  ros-jazzy-fastrtps-cmake-module \
-  ros-jazzy-rmw-fastrtps-cpp \
-  ros-jazzy-rmw-fastrtps-shared-cpp \
-  ros-jazzy-rosidl-dynamic-typesupport-fastrtps \
-  ros-jazzy-rosidl-typesupport-fastrtps-c \
-  ros-jazzy-rosidl-typesupport-fastrtps-cpp
-```
-
-Then restart the ROS daemon and rebuild:
-
-```bash
-source /opt/ros/jazzy/setup.bash
-ros2 daemon stop
-cd ~/hiwonder_xArm_1s
-rm -rf build install log
-colcon build --symlink-install
-source install/setup.bash
-```
-
-Check the versions:
-
-```bash
-dpkg -l ros-jazzy-fastcdr ros-jazzy-fastrtps ros-jazzy-rmw-fastrtps-cpp | grep ^ii
-```
-
-Expected:
-
-```
-ros-jazzy-fastcdr          2.2.8
-ros-jazzy-fastrtps         2.14.7
-ros-jazzy-rmw-fastrtps-cpp 8.4.5
-```
-
-If a different `symbol lookup error` appears later, the VM has ROS packages
-from mixed dates. Take a VM snapshot, then run `sudo apt upgrade` to align all
-`ros-jazzy-*` packages.
